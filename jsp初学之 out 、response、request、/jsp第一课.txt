@@ -1,0 +1,52 @@
+jsp中的三大指令元素是 include page taglib
+page指令用法
+language就是指定jsp页面使用的脚本语言 
+import引用脚本中使用到的类文件 类库
+contentType用来指定jsp页面采用的编码方式
+<%@ page language="java" import="null,null" contentType="utf-8"%> 
+<hr>在原html文件中生成一条横线
+<%--注释--%>//客户端不可见
+
+jsp声明定义变量或者方法
+<%! java代码%>定义变量或者方法
+<%= add(10,5)%>调用方法
+
+get以明文的方式通过url提交数据数据在url中可以看到。提交的数据不超过2kb
+适用于安全性低提交数据量不大的情况 适用于搜素查询功能
+
+post将用户提交的信息封装在HTML HEADER内 适合提交数据量大，安全性高的用户信息
+比如 注册 修改 上传等功能
+
+out对象 void clear()  void flush()如果先调用flush再调用前者会报错
+
+
+
+request对象
+String getParameter(String name)返回name特定参数的参数值
+String[] getParameter(String name)返回name特定参数的参数值
+返回包含参数name的所有制的数组(value)
+密码 : <%= request.getAttribute("password") %><br>
+请求体的MIME类型 : <%=request.getContentType() %><br>
+协议类型及其版本号: <%=request.getProtocol() %><br>
+服务器主机名: <%=request.getServerName() %><br>
+服务器端口号: <%=request.getServerPort() %><br>
+服务器的IP地址: <%=request.getRemoteAddr() %><br>
+请求的真实路径: <%=request.getRealPath("requestst.jsp") %><br>
+
+
+response对象
+response.setContentType("text/html;charset=utf-8");//设置相应的MINI类型
+
+out.println("<h1>response内置对象</h1>");
+out.println("<br>");
+out.flush();
+	
+PrintWriter outer = response.getWriter();
+outer.println("我是response对象生成的输出流outer对象");
+//输出流对象提前于out对象
+
+//请求转发 服务器端
+response.sendRedirect("reg.jsp");//重定向 客户端行为 本质上等同于两次请求前一次的请求对象不会保存 地址栏的url会改变
+
+//服务器端信息相当于一次请求 地址栏url不会改变
+request.getRequestDispatcher("requestst.jsp").forward(request,response);
