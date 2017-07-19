@@ -1,0 +1,28 @@
+session对象是一个JSP内置对象
+session对象在第一个JSP页面被装载时自动创建,完成会话期管理
+从一个客户打开浏览器并连接到服务器开始，到客户关闭浏览器这个服务器结束被称之为一个会话
+当一个客户访问一个服务器时，可能会在服务器的几个页面之间切换 但是就是这一个session对象
+会话会保存到内存里
+
+application对象
+
+page对象
+有tostring方法等方法
+
+pageContext提供了对JSP页面内所有的对象及名字空间的访问
+相当于页面中所有功能的集大成者
+
+exception对象
+errorPage="exception.jsp"发生异常后交给哪个页面处理 写在<%@ page %>标签里
+
+Javabean Jsp动作元素
+<jsp:useBean id="myUsers" class="com.po.Users" scope="page"/>
+这就相当于创建了一个 类的实例 类的名字叫做myUsers
+
+<jsp:setProperty property="username" name="myUsers">
+这相当于把表单提交过来的东西往类里面放 property代表匹配的项目
+名字相同就可以匹配 name代表是哪个类的实例
+
+<jsp:setProperty property="username" name="myUsers" value="aaa"/>
+<jsp:setProperty property="password" name="myUsers" value="888888"/>
+手动赋值
