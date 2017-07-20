@@ -1,0 +1,44 @@
+<jsp: getProperty> 作用:获取指定Javabean对象的属性值
+<jsp:getProperty name="JavaBean实例名" property="属性名"/>
+
+Javabean的四个作用域范围
+page 仅在当前页有效
+request 可以通过HttpRequest.getAttribute()方法取得JavaBean对象
+session 可以通过HttpSession.getAttribute()方法取得JavaBean对象
+application 可以通过application.getAttribute()方法取得JavaBean对象
+
+    <!-- 跟表单无关 通过手工赋值 -->
+    <!--  
+    <jsp:setProperty property="username" name="myUsers" value="aaa"/>
+    <jsp:setProperty property="password" name="myUsers" value="888888"/>
+    -->
+
+Jsp中创建与使用cookie
+
+Cookie newCookie = new Cookie(String key,Object value);
+
+response.addCookie(newCookie);
+
+Cookie[] cookies = request.getCookies();
+
+session是服务器端 Cookie是客户端
+
+include 指令
+
+<%@ include file="URL"%>
+
+include 动作
+
+<jsp:include page="include.jsp" flush="false"/>
+
+include指令相当于把代码复制进去，再去运行
+include动作相当于运行完了，把结果插进来
+
+forward 动作
+<jsp:forward page="URL"/>
+等同于 : request.getRequestDispatcher("/url").forward(request,response);服务器转发指令
+
+param 动作
+<jsp:param name="参数名" value="参数值"/> 定义一个参数 是forward的子标签
+
+业务逻辑类(DAO)
