@@ -1,0 +1,73 @@
+servlet
+
+get方式请求servlet 超链接的方式
+post方式请求servlet 表单提交的方式
+
+  <servlet>
+  	<servlet-name>HelloServlet</servlet-name>
+  	<servlet-class>servlet.HelloServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <!-- 和上面的名字对应 -->
+  	<servlet-name>HelloServlet</servlet-name>
+  	<!-- 和index.jsp里面的超链接对应 -->
+  	<url-pattern>/servlet/HelloServlet</url-pattern>
+  </servlet-mapping>
+
+
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("处理Get()请求....");
+		PrintWriter out = response.getWriter();
+		
+		out.println("<strong>Hello Servlet!</strong><br>");
+		
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("处理post()请求....");
+		PrintWriter out = response.getWriter();
+		
+		out.println("<strong>Hello Servlet!</strong><br>");
+
+  <servlet>
+  	<servlet-name>HelloServlet</servlet-name>
+  	<servlet-class>servlet.HelloServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <!-- 和上面的名字对应 -->
+  	<servlet-name>HelloServlet</servlet-name>
+  	<!-- 和index.jsp里面的超链接对应 -->
+  	<url-pattern>/servlet/HelloServlet</url-pattern>
+  </servlet-mapping>
+
+Servlet
+先构造方法
+初始化方法
+然后是doGet方法或者doPost方法 
+
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>TestServlet2</servlet-name>
+    <servlet-class>Servlet.TestServlet2</servlet-class>
+    <load-on-startup>1</load-on-startup>  //数字越大 优先级越高
+  </servlet>
+
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>TestServlet1</servlet-name>
+    <servlet-class>Servlet.TestServlet1</servlet-class>
+    <load-on-startup>2</load-on-startup> //对比上者
+  </servlet>
+
+路径问题   表单和超链接都是直接写 包名+Servlet名    /表示tomcat根目录
+           xml文档配置中   /包名+Servlet名     /表示项目根目录   （src，webroot都不存在相当于）
+           请求重定向response.sendRedirect(request.getContextPath()+"/test.jsp")（src，webroot都不存在相当于）request.getContextPath获得上下文路径
+	   请求重定位request.getRequestDispatcher("/test.jsp").forward(request,response) /表示项目根目录（src，webroot都不存在相当于）
+                                                 （"../test.jsp"）
