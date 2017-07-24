@@ -1,0 +1,12 @@
+    <init-param>
+    	<param-name>username</param-name>
+    	<param-value>admin</param-value>
+    </init-param>
+    <init-param>
+    	<param-name>password</param-name>
+    	<param-value>123456</param-value>
+    </init-param>
+
+xml文档中配置初始化参数 和Servlet类要有联系 属性相同 可以在init方法中直接定义属性的值
+
+MVC模型包含 模型层 视图层和控制器层  JSP扮演视图的角色 Servlet扮演控制器角色 javaBean扮演模型角色
