@@ -1,0 +1,64 @@
+<bean id="address" class="SpringDemo2.Address">
+<!-- 使用spel为属性赋一个字面值 -->
+	<property name="city" value="#{'beijing'}"></property>
+	<property name="street" value="wudaokou"></property>
+</bean>
+	
+<bean id="car" class="SpringDemo2.Car">
+	<property name="brand" value="audi"></property>
+	<property name="price" value="50000"></property>
+	<!-- 使用spel引用类的静态属性 -->
+	<property name="tyre" value="#P{T(java.lang.Math).PI *80}"></property>
+</bean>
+<bean id ="person" class="SpringDemo2.Person">
+<!-- 使用spel来 引用其它的Bean -->
+	<property name="car" value="#{car}"></property>
+	<!-- 使用spel来引用其它bean的属性 -->
+	<property name="city" value="#{address.city}"></property>
+</bean>
+
+bean的容器是可以销毁和创建的
+
+	<!-- 通过FactoryBean 来配置Bean的实例 
+		class:指向 FactoryBean的全类名
+		property: 配置Factorybean的属性
+		
+		但实际返回的实例却是 FactoryBean的getObject()方法返回的实例
+	-->
+	<bean id="car" class="SpringDemo.CarFactoryBean">
+		<property name="brand" value="BMW"></proper?ty>
+	</bean>
+
+package SpringDemo;
+
+import org.springframework.beans.factory.FactoryBean;
+//自定义的FactoryBean 需要实现FactoryBean实现的配置接口
+public class CarFactoryBean implements FactoryBean<Car> {
+
+	private String brand;
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	// 返回bean的对象
+	@Override
+	public Car getObject() throws Exception {
+		// TODO Auto-generated method stub
+		return new Car("BMW", 50000);
+	}
+
+	// 返回bean的类型
+	@Override
+	public Class<?> getObjectType() {
+		// TODO Auto-generated method stub
+		return Car.class;
+	}
+
+	@Override
+	public boolean isSingleton() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+}
