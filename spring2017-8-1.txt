@@ -1,0 +1,158 @@
+	<!-- 指定spring IOC 容器扫描包 -->
+	<!-- 扫描包的包括注解的类都将被IOC容器进行管理 包及其子包-->
+	<!-- 也可以用resource-pattern扫描单独的一个包下的一个类 -->
+	<!--  <context:component-scan base-package="annotation" resource-pattern="..."></context:component-scan>-->
+	<!-- 也可以使用不包含一个对象 -->
+	<!-- 也可以用include属性进行包含一个 --><!-- 该子节点需要 use-default-filters配合使用 -->
+	<!--  
+	<context:component-scan base-package="annotation">
+		<context:exclude-filter type="annotation" expression="包的名字即可"/>
+	</context:component-scan>
+	-->
+	<!-- 使用autowire可以自动装配一个bean -->
+	<context:component-scan base-package="annotation"></context:component-scan>
+	<context:component-scan base-package="Controller.copy"></context:component-scan>
+	<context:component-scan base-package="UserRepository.copy"></context:component-scan>
+	<context:component-scan base-package="UserService.copy"></context:component-scan>
+
+原来我们是怎么做的
+在使用注释配置之前，先来回顾一下传统上是如何配置 Bean 并完成 Bean 之间依赖关系的建立。下面是 3 个类，它们分别是 Office、Car 和 Boss，这 3 个类需要在 Spring 容器中配置为 Bean：
+Office 仅有一个属性：
+
+清单 1. Office.java
+                
+package com.baobaotao;
+public class Office {
+    private String officeNo =”001”;
+
+    //省略 get/setter
+
+    @Override
+    public String toString() {
+        return "officeNo:" + officeNo;
+    }
+}
+
+Car 拥有两个属性：
+
+清单 2. Car.java
+                
+package com.baobaotao;
+
+public class Car {
+    private String brand;
+    private double price;
+
+    // 省略 get/setter
+
+    @Override
+    public String toString() {
+        return "brand:" + brand + "," + "price:" + price;
+    }
+}
+
+Boss 拥有 Office 和 Car 类型的两个属性：
+
+清单 3. Boss.java
+                
+package com.baobaotao;
+
+public class Boss {
+    private Car car;
+    private Office office;
+
+    // 省略 get/setter
+
+    @Override
+    public String toString() {
+        return "car:" + car + "\n" + "office:" + office;
+    }
+}
+
+我们在 Spring 容器中将 Office 和 Car 声明为 Bean，并注入到 Boss Bean 中：下面是使用传统 XML 完成这个工作的配置文件 beans.xml：
+
+清单 4. beans.xml 将以上三个类配置成 Bean
+                
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    <bean id="boss" class="com.baobaotao.Boss">
+        <property name="car" ref="car"/>
+        <property name="office" ref="office" />
+    </bean>
+    <bean id="office" class="com.baobaotao.Office">
+        <property name="officeNo" value="002"/>
+    </bean>
+    <bean id="car" class="com.baobaotao.Car" scope="singleton">
+        <property name="brand" value=" 红旗 CA72"/>
+        <property name="price" value="2000"/>
+    </bean>
+</beans>
+
+当我们运行以下代码时，控制台将正确打出 boss 的信息：
+
+清单 5. 测试类：AnnoIoCTest.java
+                
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+public class AnnoIoCTest {
+
+    public static void main(String[] args) {
+        String[] locations = {"beans.xml"};
+        ApplicationContext ctx = 
+		    new ClassPathXmlApplicationContext(locations);
+        Boss boss = (Boss) ctx.getBean("boss");
+        System.out.println(boss);
+    }
+}
+
+这说明 Spring 容器已经正确完成了 Bean 创建和装配的工作。
+使用 @Autowired 注释
+Spring 2.5 引入了 @Autowired 注释，它可以对类成员变量、方法及构造函数进行标注，完成自动装配的工作。来看一下使用@Autowired 进行成员变量自动注入的代码：
+
+清单 6. 使用 @Autowired 注释的 Boss.java
+                
+package com.baobaotao;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class Boss {
+
+    @Autowired
+    private Car car;
+
+    @Autowired
+    private Office office;
+
+    …
+}
+
+Spring 通过一个 BeanPostProcessor 对 @Autowired 进行解析，所以要让@Autowired 起作用必须事先在 Spring 容器中声明 AutowiredAnnotationBeanPostProcessor Bean。
+
+清单 7. 让 @Autowired 注释工作起来
+                
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- 该 BeanPostProcessor 将自动起作用，对标注 @Autowired 的 Bean 进行自动注入 -->
+    <bean class="org.springframework.beans.factory.annotation.
+        AutowiredAnnotationBeanPostProcessor"/>
+
+    <!-- 移除 boss Bean 的属性注入配置的信息 -->
+    <bean id="boss" class="com.baobaotao.Boss"/>
+ 
+    <bean id="office" class="com.baobaotao.Office">
+        <property name="officeNo" value="001"/>
+    </bean>
+    <bean id="car" class="com.baobaotao.Car" scope="singleton">
+        <property name="brand" value=" 红旗 CA72"/>
+        <property name="price" value="2000"/>
+    </bean>
+</beans>
+
+这样，当 Spring 容器启动时，AutowiredAnnotationBeanPostProcessor 将扫描 Spring 容器中所有 Bean，当发现 Bean 中拥有@Autowired 注释时就找到和其匹配（默认按类型匹配）的 Bean，并注入到对应的地方中去。
+按照上面的配置，Spring 将直接采用 Java 反射机制对 Boss 中的 car 和 office 这两个私有成员变量进行自动注入。所以对成员变量使用@Autowired 后，您大可将它们的 setter 方法（setCar() 和 setOffice()）从 Boss 中删除。
