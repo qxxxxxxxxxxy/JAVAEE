@@ -1,0 +1,41 @@
+<context:component-scan base-package="BaseRepository"></context:component-scan>  有了这行代码才可以使用注解
+
+注解就是自动装配
+
+package BaseRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class BaseService<T> {
+	
+	@Autowired
+	protected BaseRepository<T> repository;
+	
+	public void add() {
+		System.out.println("add...");
+		System.out.println(repository);
+	}
+	
+}
+在这里 自动装配了一个
+
+<!-- 指定spring IOC 容器扫描包 -->
+<!-- 扫描包的包括注解的类都将被IOC容器进行管理 包及其子包-->
+<!-- 也可以用resource-pattern扫描单独的一个包下的一个类 -->
+<!--  <context:component-scan base-package="annotation" resource-pattern="..."></context:component-scan>-->
+<!-- 也可以使用不包含一个对象 -->
+<!-- 也可以用include属性进行包含一个 --><!-- 该子节点需要 use-default-filters配合使用 -->
+<!--  
+<context:component-scan base-package="annotation">
+	<context:exclude-filter type="annotation" expression="包的名字即可"/>
+</context:component-scan>
+-->
+<!-- 使用autowire可以自动装配一个bean -->
+<context:component-scan base-package="annotation"></context:component-scan>
+<context:component-scan base-package="Controller.copy"></context:component-scan>
+<context:component-scan base-package="UserRepository.copy"></context:component-scan>
+<context:component-scan base-package="UserService.copy"></context:component-scan>
+
+说说我的理解 自动装配就是使用@Autowire 大概有三个类  汽车 地址 和人 人里面包含汽车和地址 人里面可以不用写set和get方法
+把人里面的属性用@Autowire进行注解  注意xml文档中可以去掉 配置人的porperty 属性 但是必须保留 配置 汽车和地址的bean
+自动装配也是装配的也是bean
